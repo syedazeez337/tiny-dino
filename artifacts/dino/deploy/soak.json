@@ -1,0 +1,291 @@
+{
+  "checkpoint_sha256": "b4cd918bb5fae7d0a826ef23a055cbe05e70505f3487243e43d0919813f11109",
+  "crashes": 0,
+  "frames": 1000000,
+  "max_frames_per_seed": 50000,
+  "runs": [
+    {
+      "actions": {
+        "duck": 5209,
+        "jump": 7504,
+        "run": 37287
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.0737999944249168,
+      "latency_p95_ms": 0.08759999764151871,
+      "runtime_interventions": 0,
+      "seed": 201
+    },
+    {
+      "actions": {
+        "duck": 4965,
+        "jump": 7532,
+        "run": 37503
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07399999594781548,
+      "latency_p95_ms": 0.08939999679569155,
+      "runtime_interventions": 0,
+      "seed": 202
+    },
+    {
+      "actions": {
+        "duck": 5191,
+        "jump": 7308,
+        "run": 37501
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07100000220816582,
+      "latency_p95_ms": 0.0850000069476664,
+      "runtime_interventions": 0,
+      "seed": 203
+    },
+    {
+      "actions": {
+        "duck": 5170,
+        "jump": 7374,
+        "run": 37456
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07380000897683203,
+      "latency_p95_ms": 0.0889000075403601,
+      "runtime_interventions": 0,
+      "seed": 204
+    },
+    {
+      "actions": {
+        "duck": 5930,
+        "jump": 7210,
+        "run": 36860
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07380000897683203,
+      "latency_p95_ms": 0.0889000075403601,
+      "runtime_interventions": 0,
+      "seed": 205
+    },
+    {
+      "actions": {
+        "duck": 5576,
+        "jump": 7224,
+        "run": 37200
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07399999594781548,
+      "latency_p95_ms": 0.09049999061971903,
+      "runtime_interventions": 0,
+      "seed": 206
+    },
+    {
+      "actions": {
+        "duck": 5439,
+        "jump": 7350,
+        "run": 37211
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07389999518636614,
+      "latency_p95_ms": 0.08769999840296805,
+      "runtime_interventions": 0,
+      "seed": 207
+    },
+    {
+      "actions": {
+        "duck": 4848,
+        "jump": 7462,
+        "run": 37690
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07429999823216349,
+      "latency_p95_ms": 0.08739999611862004,
+      "runtime_interventions": 0,
+      "seed": 208
+    },
+    {
+      "actions": {
+        "duck": 5372,
+        "jump": 7406,
+        "run": 37222
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07419999747071415,
+      "latency_p95_ms": 0.08839998918119818,
+      "runtime_interventions": 0,
+      "seed": 209
+    },
+    {
+      "actions": {
+        "duck": 5013,
+        "jump": 7698,
+        "run": 37289
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07410001126118004,
+      "latency_p95_ms": 0.08980001439340413,
+      "runtime_interventions": 0,
+      "seed": 210
+    },
+    {
+      "actions": {
+        "duck": 5090,
+        "jump": 7481,
+        "run": 37429
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07449999975506216,
+      "latency_p95_ms": 0.0897999998414889,
+      "runtime_interventions": 0,
+      "seed": 211
+    },
+    {
+      "actions": {
+        "duck": 5510,
+        "jump": 7560,
+        "run": 36930
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07439999899361283,
+      "latency_p95_ms": 0.08909999451134354,
+      "runtime_interventions": 0,
+      "seed": 212
+    },
+    {
+      "actions": {
+        "duck": 4984,
+        "jump": 7672,
+        "run": 37344
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07399999594781548,
+      "latency_p95_ms": 0.08739999611862004,
+      "runtime_interventions": 0,
+      "seed": 213
+    },
+    {
+      "actions": {
+        "duck": 5755,
+        "jump": 7714,
+        "run": 36531
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.0740000104997307,
+      "latency_p95_ms": 0.08930001058615744,
+      "runtime_interventions": 0,
+      "seed": 214
+    },
+    {
+      "actions": {
+        "duck": 5422,
+        "jump": 7938,
+        "run": 36640
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07399999594781548,
+      "latency_p95_ms": 0.08800000068731606,
+      "runtime_interventions": 0,
+      "seed": 215
+    },
+    {
+      "actions": {
+        "duck": 5048,
+        "jump": 7364,
+        "run": 37588
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07399999594781548,
+      "latency_p95_ms": 0.08859999070409685,
+      "runtime_interventions": 0,
+      "seed": 216
+    },
+    {
+      "actions": {
+        "duck": 5096,
+        "jump": 7294,
+        "run": 37610
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07380000897683203,
+      "latency_p95_ms": 0.08769999840296805,
+      "runtime_interventions": 0,
+      "seed": 217
+    },
+    {
+      "actions": {
+        "duck": 5318,
+        "jump": 7871,
+        "run": 36811
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.0737999944249168,
+      "latency_p95_ms": 0.0889999937498942,
+      "runtime_interventions": 0,
+      "seed": 218
+    },
+    {
+      "actions": {
+        "duck": 5436,
+        "jump": 7700,
+        "run": 36864
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07419999747071415,
+      "latency_p95_ms": 0.0881000014487654,
+      "runtime_interventions": 0,
+      "seed": 219
+    },
+    {
+      "actions": {
+        "duck": 5466,
+        "jump": 7672,
+        "run": 36862
+      },
+      "crashed": false,
+      "distance": 625503.5,
+      "frames": 50000,
+      "latency_p50_ms": 0.07429999823216349,
+      "latency_p95_ms": 0.08909999451134354,
+      "runtime_interventions": 0,
+      "seed": 220
+    }
+  ],
+  "runtime_interventions": 0,
+  "seeds": 20,
+  "suite": "heldout-soak-v1"
+}

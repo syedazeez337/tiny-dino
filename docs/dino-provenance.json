@@ -1,0 +1,19 @@
+{
+  "adapted_elements": [
+    "fixed-step 60 FPS execution loop (laya_mlx/trex/engine.py)",
+    "Chromium T-Rex physics constants: speed, acceleration, gravity, jump velocity (laya_mlx/trex/engine.py)",
+    "obstacle geometry, sizes, and bird heights (laya_mlx/trex/engine.py)",
+    "two-stage axis-aligned collision-box semantics (laya_mlx/trex/engine.py)"
+  ],
+  "checkpoint_sha256": "a2407c3ed425edfe9557c2ba3bf24274ef318faa99858187c4b3374b16f91320",
+  "license_verdict": "adapted",
+  "recorded_on": "2026-09-22",
+  "reference_commit": "28541781c863fcdf20348e5bb3a2073d672fffe6",
+  "reference_repo": "https://github.com/virajbhartiya/laya-vs-jev.git",
+  "rejected_elements": [
+    "assisted gameplay"
+  ],
+  "schema": 1,
+  "source_path": "laya_mlx/trex/engine.py",
+  "source_sha256": "e73cd1902c9195723367416a6b2eb8e0bacdcaf13b145fc38c6f2876a845357d"
+}

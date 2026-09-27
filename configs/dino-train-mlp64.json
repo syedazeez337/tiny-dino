@@ -1,0 +1,1 @@
+{"schema":1,"kind":"mlp","hidden":64,"layers":3,"epochs":100,"batch_size":512,"learning_rate":0.003,"seed":7}

@@ -1,0 +1,1 @@
+{"schema":1,"kind":"mlp","hidden":96,"layers":3,"epochs":40,"batch_size":4096,"learning_rate":0.002,"seed":67,"device":"cuda","boundary_repeats":100}

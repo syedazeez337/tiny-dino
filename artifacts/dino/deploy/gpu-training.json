@@ -1,0 +1,12 @@
+{
+  "device": "cuda",
+  "device_name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+  "batch_size": 4096,
+  "epochs": 40,
+  "training_seconds": 16.476952900004108,
+  "peak_vram_bytes": 784314368,
+  "candidate_checkpoint_sha256": "106f0c1eb5cdd81778cf7f291461a29961a90dd51fa9df0d2f01a08e1555fae5",
+  "candidate_certification": "PASS",
+  "candidate_soak": "FAIL",
+  "selection": "rejected; retained the checkpoint that passed both certification and soak"
+}

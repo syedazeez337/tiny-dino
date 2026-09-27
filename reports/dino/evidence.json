@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "status": "PASS",
+  "engine_revision": "dino-engine-v2",
+  "domain_manifest_sha256": "1c8205c10fa9bbad56ed0998544261d04144ba7040ecafac0e16720830029bb4",
+  "checkpoint_sha256": "b4cd918bb5fae7d0a826ef23a055cbe05e70505f3487243e43d0919813f11109",
+  "params": 21699,
+  "deployed_bytes": 90929,
+  "training": {"configured_device": "cuda", "measured_full_run_seconds": 16.477, "peak_vram_bytes": 784314368, "batch_size": 4096},
+  "latency_ms": {"p50": 0.0484, "p95": 0.0545, "p99": 0.0709},
+  "certification": {
+    "states_checked": 5400,
+    "unsafe_actions": 0,
+    "runtime_interventions": 0,
+    "status": "PASS"
+  },
+  "heldout": {
+    "seeds": [201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220],
+    "max_frames_per_seed": 50000,
+    "frames": 1000000,
+    "crashes": 0
+  },
+  "quantization": {"int8_changed_actions": 36, "deployed": false, "reason": "FP32 retained for action parity"},
+  "claim": "This unassisted checkpoint produced zero unsafe choices over the complete frozen certification domain and zero crashes across the preregistered held-out and soak suites."
+}

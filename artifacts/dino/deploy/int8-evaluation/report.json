@@ -1,0 +1,8 @@
+{
+  "cases": 5400,
+  "changed_actions": 36,
+  "parity": false,
+  "bytes": 29049,
+  "deployed": false,
+  "reason": "FP32 retained"
+}
