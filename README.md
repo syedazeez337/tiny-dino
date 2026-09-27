@@ -53,60 +53,151 @@ The design spec and implementation plan are in `docs/specs/` and `docs/plans/`.
 They were written in the original research repository, so their file paths
 refer to the old `rlvr_curriculum` package and `docs/superpowers/` layout.
 
-## Setup
+## Requirements
 
-Requires Python 3.13 and [uv](https://docs.astral.sh/uv/). On Windows and
-Linux, torch is installed from the PyTorch CUDA 12.8 index. On macOS it comes
-from PyPI.
+- Python 3.13 and [uv](https://docs.astral.sh/uv/)
+- Node.js 20.19 or later, only for building the web app
+- No GPU needed. Every command runs on the CPU. An NVIDIA GPU only speeds up
+  training.
+
+On Windows and Linux, `uv sync` installs the CUDA 12.8 build of PyTorch. That
+build also runs on machines without a GPU. On macOS, PyTorch comes from PyPI.
+
+## Quick start
+
+Clone, install, and watch the shipped model play:
 
 ```bash
+git clone https://github.com/syedazeez337/tiny-dino.git
+cd tiny-dino
 uv sync
-uv run pytest -q
-uv run ruff check tiny_dino tests
-uv run mypy tiny_dino
-```
 
-## Watch the policy play
-
-```bash
 cd web
 npm ci
 npm run build
 cd ..
+
 uv run tiny-dino dino-web --checkpoint artifacts/dino/deploy/model.pt --open
 ```
 
-The server listens on `http://127.0.0.1:8000/` and serves `web/dist`. For
-frontend development, keep the server running and run `npm run dev` in `web/`.
-Vite proxies `/api` to port 8000.
+`--open` opens `http://127.0.0.1:8000/` in your browser. Press **Start run**.
+Change the seed to get a different course, and use **Pause**, **Stop**, and
+**Replay** (the last two seconds at half speed). The game only advances while its
+tab is visible, the same as Chrome's own Dino game.
 
-## Reproduce the evidence
+Stop the server with `Ctrl+C`. If you skip `npm run build`, the server still
+starts but serves only the JSON API under `/api/`.
 
-Re-certify the shipped checkpoint over the frozen domain:
+## Check the claim yourself
+
+Each command below uses the shipped checkpoint. The times were measured on a
+laptop and are only a rough guide.
+
+Re-certify the model over all 5,400 frozen states (about 30 seconds). This
+writes `runs/certify/certification.json`. It should print `PASS` and match
+`artifacts/dino/deploy/certification.json` field for field.
 
 ```bash
 uv run tiny-dino dino-certify --checkpoint artifacts/dino/deploy/model.pt --output runs/certify
 ```
 
-Run a short arena on seeds 201 to 204, 10,000 frames each:
+Play seeds 201 to 204 for 10,000 frames each without the browser (under a
+minute). Expect `'crashes': 0` and `'runtime_interventions': 0`.
 
 ```bash
 uv run tiny-dino dino-arena --checkpoint artifacts/dino/deploy/model.pt
 ```
 
-Train a candidate from scratch. Training was run on CUDA; to train on the CPU,
-set `"device": "cpu"` in the config.
+Run the test suite (about 6 minutes). This includes a test that ties the
+checkpoint hash to the certification, soak, and evidence files.
 
 ```bash
-uv run tiny-dino dino-train --config configs/dino-train-mlp96.json --corpus configs/dino-corpus.json --output runs/mlp96
-uv run tiny-dino dino-certify --checkpoint runs/mlp96/model.pt --output runs/mlp96
+uv run pytest -q
 ```
 
-A candidate is selected only if it passes both certification and the soak
-suite. The deployed checkpoint came out of a longer search over widths and DAgger
-rounds. A fresh run is not guaranteed to reproduce it byte for byte.
-`artifacts/dino/deploy/gpu-training.json` records one retrained CUDA candidate
-that passed certification but failed the soak suite, and was rejected.
+## Train your own model
+
+`dino-train` builds the teacher-labelled corpus, adds teacher rollouts on the
+DAgger seeds, trains, and writes `model.pt` to `--output`. Certify the result
+before you trust it.
+
+```bash
+# With an NVIDIA GPU (about 5 minutes, mostly spent building the corpus)
+uv run tiny-dino dino-train --config configs/dino-train-mlp96.json --corpus configs/dino-corpus.json --output runs/mlp96
+
+# CPU only (about 20 minutes)
+uv run tiny-dino dino-train --config configs/dino-train-mlp96.json --corpus configs/dino-corpus.json --device cpu --output runs/mlp96
+
+uv run tiny-dino dino-certify --checkpoint runs/mlp96/model.pt --output runs/mlp96
+uv run tiny-dino dino-arena --checkpoint runs/mlp96/model.pt
+uv run tiny-dino dino-web --checkpoint runs/mlp96/model.pt --open
+```
+
+A fresh run will not reproduce the shipped checkpoint byte for byte, and
+passing certification is not enough on its own. In testing, a retrained 96-wide
+model passed certification and then crashed on seed 202 at frame 2,327.
+`artifacts/dino/deploy/gpu-training.json` records a similar rejected
+candidate. The shipped model was selected because it passed both certification
+and the 1,000,000-frame soak suite.
+
+`configs/dino-train-mlp32.json` and `configs/dino-train-mlp64.json` train the
+smaller widths from the search.
+
+## Command reference
+
+All commands run as `uv run tiny-dino <command> [options]`.
+
+| Command | What it does | Required options |
+|---|---|---|
+| `dino-web` | Serve the web app and play API | `--checkpoint` |
+| `dino-certify` | Check every state in the frozen domain; write `certification.json` and `failures.csv` to `--output` | `--checkpoint` |
+| `dino-arena` | Play seeds 201 to 204 for 10,000 frames each and print the results | `--checkpoint` |
+| `dino-train` | Build the corpus, add teacher rollouts, and train a candidate | `--config`, `--corpus` |
+| `dino-corpus` | Build the teacher-labelled corpus only (about 160,000 examples, several minutes) | `--config` |
+| `dino-calibrate` | Time CPU inference for the architecture in a training config. It also rebuilds the corpus first, so it takes several minutes. | `--config`, `--corpus` |
+
+Options:
+
+| Option | Default | Used by |
+|---|---|---|
+| `--checkpoint PATH` | none | `dino-web`, `dino-certify`, `dino-arena` |
+| `--output DIR` | `runs/latest` | `dino-certify`, `dino-train`, `dino-corpus`, `dino-calibrate` |
+| `--config PATH` | none | training commands. Use a `configs/dino-train-*.json` file, or `configs/dino-corpus.json` for `dino-corpus`. |
+| `--corpus PATH` | `--config` | `dino-train`, `dino-calibrate`: corpus spec, normally `configs/dino-corpus.json` |
+| `--device {auto,cpu,cuda}` | from config | `dino-train`: overrides the config's device |
+| `--expert-frames N` | `20000` | `dino-train`: teacher rollout frames per DAgger seed |
+| `--host HOST` | `127.0.0.1` | `dino-web` |
+| `--port PORT` | `8000` | `dino-web` |
+| `--web-dir DIR` | `web/dist` | `dino-web`: serve a different frontend build |
+| `--open` | off | `dino-web`: open a browser tab |
+
+## Development
+
+```bash
+uv run pytest -q
+uv run ruff check tiny_dino tests
+uv run mypy tiny_dino
+
+cd web
+npm run typecheck
+npm run lint
+npm run test
+npm run build
+```
+
+For frontend work, keep `dino-web` running and run `npm run dev` in `web/`.
+Vite proxies `/api` to port 8000.
+
+## Troubleshooting
+
+- **`the config asks for CUDA but none is available`**: add `--device cpu` to
+  `dino-train`.
+- **`dino-web` exits with a bind error**: another process holds port 8000.
+  Pass `--port 8001` to `dino-web`.
+- **The page loads but the game does not move**: browsers pause animation in
+  background tabs. Bring the tab to the front.
+- **`incompatible Dino checkpoint`**: the checkpoint was built with a different
+  engine or feature version than this code. Train a new one.
 
 ## Repository layout
 

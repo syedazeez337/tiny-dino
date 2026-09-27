@@ -23,6 +23,11 @@ const RIGHT = WIDTH - 12
 const TOP = 18
 const BOTTOM = HEIGHT - 18
 
+/** Integer ticks use the chart's format; fractional ticks such as 1.25 keep their decimals. */
+export function tickLabel(value: number, format: (value: number) => string): string {
+  return Number.isInteger(value) ? format(value) : String(Number(value.toFixed(2)))
+}
+
 /** A small line chart with three gridlines, matching the reference arena's charts. */
 export function LineChart({ title, points, format }: LineChartProps) {
   const tMax = Math.max(20, points.length > 0 ? (points[points.length - 1]?.t ?? 0) : 0)
@@ -45,7 +50,7 @@ export function LineChart({ title, points, format }: LineChartProps) {
             <g key={fraction}>
               <line x1={LEFT} x2={RIGHT} y1={gridY} y2={gridY} className="chart__grid" />
               <text x={LEFT - 6} y={gridY + 3} className="chart__tick" textAnchor="end">
-                {format(vMax * fraction)}
+                {tickLabel(vMax * fraction, format)}
               </text>
             </g>
           )

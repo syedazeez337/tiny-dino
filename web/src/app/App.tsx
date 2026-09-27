@@ -61,6 +61,7 @@ const STATUS: Record<string, string> = {
   paused: 'Paused',
   stopped: 'Stopped',
   crashed: 'Crashed',
+  complete: 'Complete',
   error: 'Error',
 }
 
@@ -71,6 +72,7 @@ function usePlay() {
   const [display, setDisplay] = useState<Frame | null>(null)
   const [tick, setTick] = useState(0)
   const [crashed, setCrashed] = useState(false)
+  const [completed, setCompleted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [scoreSeries, setScoreSeries] = useState<{ t: number; v: number }[]>([])
   const [latencySeries, setLatencySeries] = useState<{ t: number; v: number }[]>([])
@@ -83,6 +85,7 @@ function usePlay() {
   const buffer = useRef<Frame[]>([])
   const pending = useRef(false)
   const exhausted = useRef(false)
+  const endStatus = useRef<string | null>(null)
   const finished = useRef(false)
   const elapsed = useRef(0)
   const previous = useRef<number | null>(null)
@@ -116,7 +119,10 @@ function usePlay() {
       })
       if (sessionRef.current !== id) return
       buffer.current.push(...response.frames)
-      if (response.status !== 'running') exhausted.current = true
+      if (response.status !== 'running') {
+        exhausted.current = true
+        endStatus.current = response.status
+      }
     } catch (caught) {
       if (sessionRef.current === id) {
         setError(caught instanceof Error ? caught.message : 'Play request failed')
@@ -163,6 +169,7 @@ function usePlay() {
   const start = useCallback(async () => {
     setError(null)
     setCrashed(false)
+    setCompleted(false)
     setStopped(false)
     setDiverged(null)
     setReplayFrame(null)
@@ -180,6 +187,7 @@ function usePlay() {
     checkedRef.current = 0
     divergedRef.current = null
     exhausted.current = false
+    endStatus.current = null
     finished.current = false
     pending.current = false
     replayRef.current = null
@@ -213,7 +221,8 @@ function usePlay() {
         const clip = replayRef.current
         const index = Math.floor(replayProgress.current)
         if (index >= clip.length - 1) {
-          setReplayFrame(clip[clip.length - 1] ?? null)
+          // Hand the canvas back to the live display, which already holds the final frame.
+          setReplayFrame(null)
           replayRef.current = null
         } else {
           setReplayFrame(clip[index] ?? null)
@@ -258,8 +267,13 @@ function usePlay() {
           finished.current = true
           runningRef.current = false
           setRunning(false)
-          setCrashed(true)
-          void loadReplay()
+          // The server also ends a session at its frame cap; only a terminal engine state is a crash.
+          if (endStatus.current === 'crashed') {
+            setCrashed(true)
+            void loadReplay()
+          } else {
+            setCompleted(true)
+          }
         } else if (buffer.current.length < CHUNK / 2 && !exhausted.current && sessionRef.current) {
           void fetchChunk(sessionRef.current)
         }
@@ -275,7 +289,7 @@ function usePlay() {
   const p95 = median(latencyRef.current.slice(-120).map((sample) => sample.v))
   const rate = agreement.checked > 0 ? (100 * agreement.agree) / agreement.checked : 100
 
-  return { seed, setSeed, session, running, setRunning, display, tick, crashed, error, scoreSeries, latencySeries, replayFrame, frames, agreement, diverged, stopped, state, chosen, p50, p95, rate, start, stop, loadReplay, best: bestRef.current, framesRef }
+  return { seed, setSeed, session, running, setRunning, display, tick, crashed, completed, error, scoreSeries, latencySeries, replayFrame, frames, agreement, diverged, stopped, state, chosen, p50, p95, rate, start, stop, loadReplay, best: bestRef.current, framesRef }
 }
 
 export function App() {
@@ -309,7 +323,9 @@ export function App() {
     ? 'error'
     : play.crashed
       ? 'crashed'
-      : play.stopped
+      : play.completed
+        ? 'complete'
+        : play.stopped
         ? 'stopped'
         : play.running
           ? 'running'
@@ -344,14 +360,14 @@ export function App() {
           <button
             className="button button--secondary"
             onClick={() => play.setRunning((value) => !value)}
-            disabled={!play.session || play.stopped || play.crashed}
+            disabled={!play.session || play.stopped || play.crashed || play.completed}
           >
             {play.running ? 'Pause' : 'Resume'}
           </button>
           <button
             className="button button--secondary"
             onClick={play.stop}
-            disabled={!play.session || play.stopped || play.crashed}
+            disabled={!play.session || play.stopped || play.crashed || play.completed}
           >
             Stop
           </button>
@@ -379,7 +395,7 @@ export function App() {
           </p>
           {play.replayFrame ? (
             <div className="lane__replay">
-              CRASH REPLAY · ½× · SCORE {scoreFromDistance(play.replayFrame.state.distance)} —
+              {play.crashed ? 'CRASH REPLAY' : 'REPLAY'} · ½× · SCORE {scoreFromDistance(play.replayFrame.state.distance)} —
               reconstructed and hash-verified server-side; the live race is unaffected
             </div>
           ) : (
@@ -423,7 +439,7 @@ export function App() {
               value={scoreFromDistance(play.state?.distance ?? 0).toLocaleString()}
             />
             <Tile label="Best" value={play.best.toLocaleString()} />
-            <Tile label="Deaths" value="0" />
+            <Tile label="Deaths" value={play.crashed ? '1' : '0'} />
             <Tile
               label="Answer time"
               value={play.p50 === null ? '—' : `${play.p50.toFixed(0)} ms`}
@@ -458,6 +474,11 @@ export function App() {
       {play.crashed ? (
         <div className="banner banner--danger">
           Run ended at frame {play.frames.toLocaleString()}; no action was substituted.
+        </div>
+      ) : null}
+      {play.completed ? (
+        <div className="banner">
+          Run reached the session limit at frame {play.frames.toLocaleString()} without a crash.
         </div>
       ) : null}
 

@@ -15,6 +15,8 @@ def main() -> None:
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--corpus", type=Path)
     parser.add_argument("--expert-frames", type=int, default=20_000)
+    parser.add_argument("--device", choices=("auto", "cpu", "cuda"),
+                        help="override the training config's device")
     parser.add_argument("--web-dir", type=Path)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
@@ -29,15 +31,21 @@ def main() -> None:
         import torch
 
         from .dino_dataset import Corpus, Example, generate_corpus, load_dataset_spec, write_corpus
+        from .dino_model import build_model
+        from .dino_train import calibrate, load_training_spec, train_candidate
+        if args.command != "dino-corpus":
+            # Check the training config before spending minutes building the corpus.
+            spec = load_training_spec(args.config)
+            if args.device:
+                spec = replace(spec, device=args.device)
+            if spec.device == "cuda" and not torch.cuda.is_available():
+                parser.error("the config asks for CUDA but none is available; pass --device cpu")
         corpus_path = args.corpus or args.config
         payload = json.loads(corpus_path.read_text(encoding="utf-8"))
         corpus = generate_corpus(load_dataset_spec(payload))
         if args.command == "dino-corpus":
             print(write_corpus(corpus, args.output))
             return
-        from .dino_model import build_model
-        from .dino_train import calibrate, load_training_spec, train_candidate
-        spec = load_training_spec(args.config)
         if args.command == "dino-calibrate":
             from .io import atomic_write_json
             args.output.mkdir(parents=True, exist_ok=True)
