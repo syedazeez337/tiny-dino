@@ -35,7 +35,7 @@
 
 ## Execution Model
 
-Each milestone is **one reviewable CommandCode run** in an isolated worktree, executed with `deepseek/deepseek-v4-flash` in `--yolo` mode. Setup:
+Each milestone is **one reviewable agent run** in an isolated worktree, executed with `deepseek/deepseek-v4-flash` in `--yolo` mode. Setup:
 
 ```powershell
 git worktree add ..\tiny-dino -b feature/tiny-dino-policy
@@ -45,7 +45,7 @@ uv sync
 uv run pytest -q   # baseline must be green before M0
 ```
 
-Strictly ordered. Per milestone: **failing test (RED) → implement → focused green → repository gates → commit.** The orchestrator inspects diff and artifacts and re-runs the listed commands before accepting. CommandCode may edit only this worktree: no push, publish, deploy, history rewrite, Nim-checkpoint changes, or completion claims from its own prose. Implementation commits and generated experimental artifacts stay separate. No agent or bot attribution is added to commits.
+Strictly ordered. Per milestone: **failing test (RED) → implement → focused green → repository gates → commit.** The orchestrator inspects diff and artifacts and re-runs the listed commands before accepting. The agent may edit only this worktree: no push, publish, deploy, history rewrite, Nim-checkpoint changes, or completion claims from its own prose. Implementation commits and generated experimental artifacts stay separate. No agent or bot attribution is added to commits.
 
 ## Shared conventions
 

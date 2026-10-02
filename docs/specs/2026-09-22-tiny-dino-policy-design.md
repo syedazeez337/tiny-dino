@@ -312,13 +312,13 @@ Required gates include:
 
 ## 15. Orchestration and Change Control
 
-Implementation is delegated to CommandCode using
+Implementation is delegated to an autonomous coding agent using
 `deepseek/deepseek-v4-flash` in `--yolo` mode inside a dedicated managed
 worktree. The primary orchestrator supplies the approved spec and plan, limits
 each run to one reviewable milestone, inspects diffs and artifacts, and runs
 independent verification before accepting the milestone.
 
-CommandCode may edit only the isolated Dino worktree. It must not push, publish,
+The agent may edit only the isolated Dino worktree. It must not push, publish,
 deploy, rewrite history, alter the preserved Nim checkpoint, or claim completion
 from its own prose. Implementation commits and generated experimental artifacts
 remain separate. No bot or agent attribution is added to commits.
