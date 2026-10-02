@@ -1,0 +1,148 @@
+:root {
+  --bg: #0e1014;
+  --panel: #161a22;
+  --panel-2: #1d222c;
+  --line: #2a3140;
+  --text: #e7ecf3;
+  --muted: #8b95a7;
+  --accent: #7c9cff;
+  --x: #7c9cff;
+  --o: #f0a35e;
+  --good: #4ade80;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at 50% -10%, #1a2130 0%, var(--bg) 60%);
+  color: var(--text);
+  font: 16px/1.5 "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 20px 56px;
+}
+
+header { text-align: center; max-width: 720px; }
+h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+  letter-spacing: -0.02em;
+}
+.sub { margin: 0; color: var(--muted); font-size: 14px; }
+
+main {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: auto 320px;
+  gap: 28px;
+  align-items: start;
+}
+
+.board-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 104px);
+  grid-template-rows: repeat(3, 104px);
+  gap: 10px;
+}
+
+.cell {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 14px;
+  color: var(--muted);
+  font-size: 34px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.08s ease, border-color 0.12s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cell:hover:not(:disabled) { background: var(--panel-2); border-color: var(--accent); }
+.cell:active:not(:disabled) { transform: scale(0.97); }
+.cell:disabled { cursor: default; }
+.cell.taken { color: var(--text); }
+.cell.x { color: var(--x); }
+.cell.o { color: var(--o); }
+.cell.last-model { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(124, 156, 255, 0.25) inset; }
+
+.banner {
+  min-height: 24px;
+  color: var(--muted);
+  font-size: 15px;
+  text-align: center;
+}
+.banner.win { color: var(--good); font-weight: 600; }
+.banner.lose { color: var(--o); font-weight: 600; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.badge {
+  align-self: start;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--accent);
+  border: 1px solid rgba(124, 156, 255, 0.4);
+  background: rgba(124, 156, 255, 0.08);
+  padding: 5px 9px;
+  border-radius: 999px;
+}
+
+.controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.controls label { color: var(--muted); font-size: 13px; display: flex; align-items: center; gap: 8px; }
+select, button {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+#new { background: var(--accent); color: #0b1020; border: none; font-weight: 600; }
+
+.status { font-size: 14px; color: var(--text); min-height: 20px; }
+
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.metrics div { background: var(--panel-2); border-radius: 10px; padding: 10px 12px; }
+.metrics span { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+.metrics b { font-size: 16px; }
+
+.probs-title { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+.probs { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; height: 64px; align-items: end; }
+.prob { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+.prob .bar { background: linear-gradient(var(--accent), #4d68b8); border-radius: 4px 4px 0 0; min-height: 2px; }
+.prob span { text-align: center; color: var(--muted); font-size: 9px; margin-top: 2px; }
+
+.card {
+  background: var(--panel-2);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  word-break: break-word;
+}
+.card b { color: var(--text); }
+.card .ok { color: var(--good); font-weight: 600; }
+
+@media (max-width: 720px) {
+  main { grid-template-columns: 1fr; }
+  .board { grid-template-columns: repeat(3, 84px); grid-template-rows: repeat(3, 84px); }
+  .cell { font-size: 28px; }
+}

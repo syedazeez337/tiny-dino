@@ -18,3 +18,7 @@ web/node_modules/
 web/dist/
 web/coverage/
 web/.mypy_cache/
+
+# tiny-tictactoe deployment artifact (the global *.pt rule would otherwise hide it)
+!tiny-tictactoe/artifacts/
+!tiny-tictactoe/artifacts/**
