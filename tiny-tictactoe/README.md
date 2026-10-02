@@ -74,4 +74,7 @@ with `--moves "5,1,9"`.
 
 - The whole study is a port of the Tiny Dino recipe; see the sibling `tiny-dino`
   project for the Dino version and its evidence chain.
+- It also appears inside the shared Tiny Games browser interface: from the
+  repository root, `uv run tiny-dino dino-web --checkpoint
+  artifacts/dino/deploy/model.pt` serves both games on one page.
 - Tic-tac-toe is public domain, so there are no licensing or provenance concerns.

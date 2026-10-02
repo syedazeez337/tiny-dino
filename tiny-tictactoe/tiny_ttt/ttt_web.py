@@ -1,15 +1,19 @@
-"""FastAPI server + static frontend for playing the tic-tac-toe policy."""
+"""FastAPI routes + standalone app for playing the tic-tac-toe policy.
+
+`build_router` is the reusable unit: the unified Tiny Games server mounts it at
+`/api/ttt`, and `create_app` mounts it at `/api` for the standalone `tiny-ttt web`.
+"""
 from __future__ import annotations
 
 import json
 import time
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import torch
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -96,8 +100,9 @@ class MoveRequest(BaseModel):
     cell: int
 
 
-def create_app(policy: Policy, web_dir: Path | None = None) -> FastAPI:
-    app = FastAPI(title="Tiny Tic-Tac-Toe")
+def build_router(policy: Policy) -> APIRouter:
+    """A self-contained tic-tac-toe API, ready to mount under any prefix."""
+    router = APIRouter()
     runs: dict[str, Run] = {}
 
     def model_turn(run: Run) -> None:
@@ -129,11 +134,11 @@ def create_app(policy: Policy, web_dir: Path | None = None) -> FastAPI:
             "latency_ms": run.latency_ms,
         }
 
-    @app.get("/api/model")
+    @router.get("/model")
     def model_info() -> dict[str, Any]:
         return policy.describe()
 
-    @app.post("/api/play/start")
+    @router.post("/play/start")
     def start(request: StartRequest) -> dict[str, Any]:
         human = _as_player(request.human)
         engine = TicTacToeEngine()
@@ -144,7 +149,7 @@ def create_app(policy: Policy, web_dir: Path | None = None) -> FastAPI:
             model_turn(run)
         return payload(run)
 
-    @app.post("/api/play/move")
+    @router.post("/play/move")
     def move(request: MoveRequest) -> dict[str, Any]:
         run = runs.get(request.run_id)
         if run is None:
@@ -159,9 +164,14 @@ def create_app(policy: Policy, web_dir: Path | None = None) -> FastAPI:
             model_turn(run)
         return payload(run)
 
+    return router
+
+
+def create_app(policy: Policy, web_dir: Path | None = None) -> FastAPI:
+    app = FastAPI(title="Tiny Tic-Tac-Toe")
+    app.include_router(build_router(policy), prefix="/api")
     if web_dir is not None and web_dir.exists():
         app.mount("/", StaticFiles(directory=str(web_dir), html=True), name="static")
-
     return app
 
 

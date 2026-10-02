@@ -27,11 +27,12 @@ mapping from the state vector to an action, computed in well under one frame.
 ## Requirements
 
 - Python 3.13 and [uv](https://docs.astral.sh/uv/)
-- Node.js 20.19 or later — only for the Tiny Dino web app
+- Node.js 20.19 or later — for the browser interface
 
-## Play Tiny Dino
+## Play both games
 
-Run from the repository root:
+One server hosts both games in a single browser interface (light mode). From the
+repository root:
 
 ```bash
 uv sync
@@ -44,22 +45,24 @@ cd ..
 uv run tiny-dino dino-web --checkpoint artifacts/dino/deploy/model.pt --open
 ```
 
-`--open` opens `http://127.0.0.1:8000/`. Press **Start run**. Full details,
-including how to retrain and re-certify, are in [docs/dino.md](docs/dino.md).
+`--open` opens `http://127.0.0.1:8000/`. The top bar switches between **Dino**
+and **Tic-Tac-Toe**:
 
-## Play Tiny Tic-Tac-Toe
+- **Dino** — press **Start run**. Change the seed, pause, stop, or replay a crash.
+  Full details, including how to retrain and re-certify, are in
+  [docs/dino.md](docs/dino.md).
+- **Tic-Tac-Toe** — pick X or O and click a cell. The model never loses; your
+  best result is a draw. Full details are in
+  [tiny-tictactoe/README.md](tiny-tictactoe/README.md).
 
-The trained model ships in `artifacts/`, so you can play without training:
+The tic-tac-toe checkpoint is served from `tiny-tictactoe/artifacts/model.pt` by
+default; override it with `--ttt-checkpoint PATH`. Tiny Tic-Tac-Toe can also run
+standalone, from `tiny-tictactoe/`:
 
 ```bash
-cd tiny-tictactoe
 uv sync
 uv run tiny-ttt web --checkpoint artifacts/model.pt --open
 ```
-
-`--open` opens `http://127.0.0.1:8000/`. Pick a side and click a cell. The model
-never loses — your best result is a draw. Full details are in
-[tiny-tictactoe/README.md](tiny-tictactoe/README.md).
 
 ## Check the claims yourself
 
@@ -87,8 +90,9 @@ tiny-tictactoe/    Tiny Tic-Tac-Toe, a self-contained subproject (package tiny_t
 ```
 
 Tiny Dino lives at the repository root; Tiny Tic-Tac-Toe is an independent
-subproject in `tiny-tictactoe/` with its own `pyproject.toml`. Each game is run
-from its own directory, as shown above.
+subproject in `tiny-tictactoe/` with its own `pyproject.toml`. The browser
+interface serves both from one server; the standalone commands above run each
+game on its own.
 
 ## License
 

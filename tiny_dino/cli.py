@@ -18,6 +18,7 @@ def main() -> None:
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"),
                         help="override the training config's device")
     parser.add_argument("--web-dir", type=Path)
+    parser.add_argument("--ttt-checkpoint", type=Path, default=Path("tiny-tictactoe/artifacts/model.pt"))
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--open", dest="open_browser", action="store_true")
@@ -79,4 +80,11 @@ def main() -> None:
     if not args.checkpoint:
         parser.error("dino-web requires --checkpoint")
     from .dino_web import serve
-    serve(args.checkpoint, args.host, args.port, args.web_dir, args.open_browser)
+    serve(
+        args.checkpoint,
+        args.host,
+        args.port,
+        args.web_dir,
+        args.open_browser,
+        ttt_checkpoint=args.ttt_checkpoint,
+    )
