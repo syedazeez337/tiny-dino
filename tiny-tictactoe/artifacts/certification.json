@@ -1,0 +1,13 @@
+{
+  "checkpoint_sha256": "e5f173bacb9f1adf1ec76d15f623d6f2d153d05aac97defc9c1aceb4f48ed875",
+  "domain_sha256": "372d95ea59e3b04937d3c06eb22ec8704996dab19343b6bc0884a8ee7404c804",
+  "positions": 5478,
+  "decisions": 4520,
+  "optimal": 4520,
+  "non_optimal": 0,
+  "illegal": 0,
+  "perfect_play": true,
+  "examples": [],
+  "claim": "This frozen policy makes a game-theoretically optimal move in every reachable tic-tac-toe position, so it never loses with unlimited play.",
+  "seconds": 3.5402956000034465
+}

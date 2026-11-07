@@ -43,15 +43,24 @@ def _frame(state: EngineState) -> dict[str, object]:
     return state.as_dict()
 
 
+def _load_ttt_policy(ttt_checkpoint: Path | None) -> Any | None:
+    if ttt_checkpoint is None or not Path(ttt_checkpoint).exists():
+        return None
+    from tiny_ttt.ttt_web import Policy as TicTacToePolicy
+
+    return TicTacToePolicy(Path(ttt_checkpoint))
+
+
 def create_app(
     runtime: Runtime,
     *,
     static_dir: Path | None = None,
     certification: dict[str, Any] | None = None,
+    ttt_policy: Any | None = None,
 ) -> FastAPI:
     if certification is not None and certification.get("checkpoint_sha256") != runtime.sha256:
         raise ValueError("certification snapshot does not match the loaded checkpoint")
-    app = FastAPI(title="Tiny Dino", docs_url=None, redoc_url=None)
+    app = FastAPI(title="Tiny Games", docs_url=None, redoc_url=None)
     sessions: dict[str, Session] = {}
     lock = threading.Lock()
 
@@ -171,6 +180,11 @@ def create_app(
             raise HTTPException(status_code=404, detail="no frozen certification snapshot")
         return certification
 
+    if ttt_policy is not None:
+        from tiny_ttt.ttt_web import build_router as build_ttt_router
+
+        app.include_router(build_ttt_router(ttt_policy), prefix="/api/ttt")
+
     if static_dir is not None and static_dir.exists():
         app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="web")
     return app
@@ -182,6 +196,7 @@ def serve(
     port: int = 8000,
     web_dir: Path | None = None,
     open_browser: bool = False,
+    ttt_checkpoint: Path | None = None,
 ) -> None:
     import json
 
@@ -193,11 +208,22 @@ def serve(
     model_action(runtime, warm_engine.snapshot())  # pay torch's first-call setup before serving
     cert_path = checkpoint.parent / "certification.json"
     certification = json.loads(cert_path.read_text(encoding="utf-8")) if cert_path.exists() else None
+    ttt_policy = _load_ttt_policy(ttt_checkpoint)
+    if ttt_policy is not None:
+        games = "Dino + Tic-Tac-Toe"
+    else:
+        games = "Dino"
+    print(f"serving Tiny Games ({games}) at http://{host}:{port}/")
     static = web_dir or Path(__file__).resolve().parents[1] / "web" / "dist"
     if open_browser:
         webbrowser.open(f"http://{host}:{port}/")
     uvicorn.run(
-        create_app(runtime, static_dir=static if static.exists() else None, certification=certification),
+        create_app(
+            runtime,
+            static_dir=static if static.exists() else None,
+            certification=certification,
+            ttt_policy=ttt_policy,
+        ),
         host=host,
         port=port,
         log_level="info",
